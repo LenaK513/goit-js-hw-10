@@ -3,38 +3,48 @@ import './css/styles.css';
 // import fetchCountries from './fetchCountries';
 const DEBOUNCE_DELAY = 300;
 
-// fetch(
-//   'https://restcountries.com/v2/all?fields=name.official,capital,currencies,population,flags,languages'
-// )
-//   .then(response => response.json())
-//   .then(console.log);
-function fetchCountries(name) {
+const input = document.getElementById('search-box');
+const countriesList = document.querySelector('.country-list');
+
+input.addEventListener('input', onInputName);
+
+function fetchCountries() {
   return fetch(
     `https://restcountries.com/v2/all?fields=name,capital,currencies,population,flags,languages`
-  )
-    .then(response => response.json())
-    .then(console.log);
+  ).then(response => {
+    return response.json();
+  });
+  // .then(console.log);
 }
 
-const input = document.getElementById('search-box');
-input.addEventListener('input', onSearchCountry);
+let nameCountry = '';
 
-function onSearchCountry(e) {
-  const nameCountry = e.currentTarget.value;
+function onInputName(e) {
+  nameCountry = e.currentTarget.value;
   console.log(nameCountry);
 
-  fetchCountries(name)
-    .then(renderCountry)
-    .catch(error => console.log(error));
+  // fetchCountries(nameCountry)
+  //   .then(renderCountry)
+  //   .catch(error => console.log(error));
 }
 
-function renderCountry(name) {
-  const makeupCountry = name => {
-    return `<div>
-      <img src="${flags.svg}">${name.official}</img>
-      <p>Capital: ${capital}</p>
-      <p>Population: ${population}</p>
-      <p>Language: ${language}</p>
-    </div>`;
-  };
-}
+// function renderCountry(countries) {
+//   countries.filter(function (country) {
+//     if (nameCountry === country.name) {
+//       nameCountry += `<li >${country.name}</li>`;
+//       countriesList.innerHTML = nameCountry;
+//     }
+//     // // console.log(country.name);
+//     console.log(nameCountry);
+//   });
+// }
+
+// .join('');
+
+// name.forEach(country => {
+//   nameCountry += `<li class="form-item">${name.official}</li>`;
+//   return (countriesList.innerHTML = nameCountry);
+//   //   console.log(nameCountry);
+// });
+// console.dir(name);
+//   console.log(nameCountry);
