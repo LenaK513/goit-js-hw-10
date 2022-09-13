@@ -1,2 +1,0 @@
-!function(){function n(n){}document.getElementById("search-box").addEventListener("input",(function(e){var t=e.currentTarget.value;console.log(t),(name,fetch("https://restcountries.com/v2/all?fields=name,capital,currencies,population,flags,languages").then((function(n){return n.json()})).then(console.log)).then(n).catch((function(n){return console.log(n)}))}))}();
-//# sourceMappingURL=index.5252bedf.js.map
