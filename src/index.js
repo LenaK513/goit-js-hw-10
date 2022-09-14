@@ -23,21 +23,28 @@ function onInputName(e) {
   nameCountry = e.currentTarget.value;
   console.log(nameCountry);
 
-  // fetchCountries(nameCountry)
-  //   .then(renderCountry)
-  //   .catch(error => console.log(error));
+  fetchCountries(nameCountry)
+    .then(renderCountry)
+    .catch(error => console.log(error));
 }
 
-// function renderCountry(countries) {
-//   countries.filter(function (country) {
-//     if (nameCountry === country.name) {
-//       nameCountry += `<li >${country.name}</li>`;
-//       countriesList.innerHTML = nameCountry;
-//     }
-//     // // console.log(country.name);
-//     console.log(nameCountry);
-//   });
-// }
+function renderCountry(countries) {
+  countries.filter(function (country) {
+    let lastLetter = nameCountry.slice(-1);
+    let findCountry = country.name;
+    console.log(findCountry);
+    if (findCountry.includes(lastLetter)) {
+      console.log((nameCountry += `<li >${country.name}</li>`));
+    }
+
+    // if (country.name) {
+    //   nameCountry += `<li >${country.name}</li>`;
+    //   countriesList.innerHTML = nameCountry;
+    // }
+    // // // console.log(country.name);
+    // console.log(nameCountry);
+  });
+}
 
 // .join('');
 
