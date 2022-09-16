@@ -1,57 +1,89 @@
 import './css/styles.css';
-
-// import fetchCountries from './fetchCountries';
+import debounce from 'lodash.debounce';
+import Notiflix from 'notiflix';
+import { fetchCountries } from './fetchCountries';
 const DEBOUNCE_DELAY = 300;
 
-const input = document.getElementById('search-box');
+const input = document.querySelector('#search-box');
 const countriesList = document.querySelector('.country-list');
-
-input.addEventListener('input', onInputName);
-
-function fetchCountries() {
-  return fetch(
-    `https://restcountries.com/v2/all?fields=name,capital,currencies,population,flags,languages`
-  ).then(response => {
-    return response.json();
-  });
-  // .then(console.log);
+const countryInfo = document.querySelector('.country-info');
+let countriesArr = [];
+input.addEventListener('input', debounce(onTextInput, DEBOUNCE_DELAY));
+window.onload = onDocumentLoaded;
+function onDocumentLoaded() {
+  countriesArr = onPrepareCountryNamesArray();
 }
 
-let nameCountry = '';
+function onPrepareCountryNamesArray() {
+  var localCountriesArr = [];
 
-function onInputName(e) {
-  nameCountry = e.currentTarget.value;
-  console.log(nameCountry);
-
-  fetchCountries(nameCountry)
-    .then(renderCountry)
+  fetchCountries()
+    .then(jsonArr => jsonArr.forEach(c => localCountriesArr.push(c)))
     .catch(error => console.log(error));
+
+  return localCountriesArr;
 }
 
-function renderCountry(countries) {
-  countries.filter(function (country) {
-    let lastLetter = nameCountry.slice(-1);
-    let findCountry = country.name;
-    console.log(findCountry);
-    if (findCountry.includes(lastLetter)) {
-      console.log((nameCountry += `<li >${country.name}</li>`));
-    }
+console.log(countriesArr);
 
-    // if (country.name) {
-    //   nameCountry += `<li >${country.name}</li>`;
-    //   countriesList.innerHTML = nameCountry;
-    // }
-    // // // console.log(country.name);
-    // console.log(nameCountry);
-  });
+function onTextInput(e) {
+  let countryInput = e.target.value.toLowerCase();
+
+  let renderList = onFilterSearch(countryInput);
+
+  onCreateCountryItem(renderList);
+  onCreateCountryInfo(renderList);
 }
 
-// .join('');
+function onFilterSearch(countrySearch) {
+  let countrySearchList = [];
+  countrySearchList = countriesArr.filter(country =>
+    country.name.toLowerCase().includes(countrySearch)
+  );
+  if (countrySearchList.length > 10) {
+    Notiflix.Notify.info(
+      'Too many matches found. Please, enter a more specific name.'
+    );
+    return [];
+  }
+  if (!countrySearchList.length) {
+    Notiflix.Notify.failure('Oops, there is no country with that name');
+  }
+  return countrySearchList;
+}
 
-// name.forEach(country => {
-//   nameCountry += `<li class="form-item">${name.official}</li>`;
-//   return (countriesList.innerHTML = nameCountry);
-//   //   console.log(nameCountry);
-// });
-// console.dir(name);
-//   console.log(nameCountry);
+function onCreateCountryItem(countries) {
+  let countryItemList = [];
+  countriesList.innerHTML = '';
+  if (countries.length > 0) {
+    countriesList.innerHTML = countries
+      .map(
+        c =>
+          `
+      <li>
+        <span>
+          <img src=${c.flags.svg} width="70">
+          ${c.name}
+        </span>
+      </li>
+      `
+      )
+      .join('');
+  }
+}
+function onCreateCountryInfo(countries) {
+  countryInfo.innerHTML = '';
+  if (countries.length == 1) {
+    countryInfo.innerHTML = `
+      <div>
+        <span><b>Capiatal: </b>: ${countries[0].capital}</span>
+        <br>
+        <span><b>Population: </b>: ${countries[0].population}</span>
+        <br>
+        <span><b>Languages: </b>: ${countries[0].languages
+          .map(l => l.name)
+          .join(', ')}</span>
+      </div>
+      `;
+  }
+}
