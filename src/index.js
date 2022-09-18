@@ -14,8 +14,6 @@ function onTextInput(e) {
   let countryInput = e.target.value.toLowerCase().trim();
 
   fetchCountries(countryInput).then(onFilterSearch).catch(onCreateCountryError);
-
-  // console.log(fetchCountries(countryInput));
 }
 
 function onFilterSearch(countries) {
